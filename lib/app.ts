@@ -8,71 +8,50 @@ var io = socketIO(server);
 import { PlayerList } from "./PlayerList";
 app.set("port", 5000);
 app.use("/static", express.static(__dirname + "/static")); // Routing
-app.get("/", function(request, response) {
-  response.sendFile(path.join(__dirname, "index.html"));
-}); // Starts the server.
+app.get("/", (req, res) => {
+  res.send({ message: "Welcome to Xombie API" });
+});
 server.listen(5000, function() {
   console.log("Starting server on port 5000");
 });
 
-let players = PlayerList.players;
+var players = {};
+
+var lastUpdateTime = new Date().getTime();
 
 io.on("connection", socket => {
   socket.on("player", userData => {
-    console.log(`${userData.username} has connected to the server.`);
-    players[socket.id] = {
-      username: userData.username,
-      x: 100,
-      y: 100
-    };
+    if (!players[userData.username]) {
+      console.log(`${userData.username} has connected`);
 
-    socket.on("playerInfo", data => {
-      let { move } = data;
-      //update position
-      console.log("position updated");
-      players[socket.id].move = move;
-      console.log(players);
-    });
+      players[userData.username] = {
+        health: 100,
+        position: { x: 100, y: 100 }
+      };
+    }
+  });
+  socket.on("updatePosition", ({ direction, username }) => {
+    moveLogic(username, direction);
   });
 });
 
-// import * as express from "express";
-// import * as bodyParser from "body-parser";
-// import { Request, Response } from "express";
-// import * as socketIO from "socket.io";
+setInterval(() => {
+  io.sockets.emit("state", players);
+}, 1000 / 60);
 
-// class App {
-//   constructor() {
-//     this.app = express();
-//     this.config();
-//     this.routes();
-//   }
+const moveLogic = (id, direction) => {
+  let speed = 50;
+  var player = players[id];
 
-//   public app: express.Application;
+  // code ...
+  var currentTime = new Date().getTime();
+  var timeDifference = currentTime - lastUpdateTime;
+  player.position.x += (5 * timeDifference * direction.x * speed) / 1000;
+  player.position.y += (5 * timeDifference * direction.y * speed) / 1000;
+  lastUpdateTime = currentTime;
 
-//   private config(): void {
-//     this.app.use(bodyParser.json());
-//     this.app.use("/src", express.static(__dirname + "/src")); // Routing
-//     this.app.use(bodyParser.urlencoded({ extended: false }));
-//   }
-
-//   private routes(): void {
-//     const router = express.Router();
-
-//     router.get("/", (req: Request, res: Response) => {
-//       res.status(200).send({
-//         message: "Hello World!"
-//       });
-//     });
-
-//     router.post("/", (req: Request, res: Response) => {
-//       const data = req.body;
-//       // query a database and save data
-//       res.status(200).send(data);
-//     });
-
-//     this.app.use("/", router);
-//   }
-// }
-
-// export default new App().app;
+  //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)
+  //   players[id].position.x += speed * direction.x;
+  //   // if (y + direction.y * speed > 30 && y + direction.y * speed < height - 40)
+  //   players[id].position.y += direction.y * speed;/
+};

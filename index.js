@@ -69,7 +69,7 @@ setInterval(() => {
 }, 1000 / 60);
 
 const updateProjectiles = () => {
-  var speed = 30;
+  var speed = 5;
   for (let id in projectiles) {
     // delete projectiles[id];
     let { x, y } = projectiles[id].position;

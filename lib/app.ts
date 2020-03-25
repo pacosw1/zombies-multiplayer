@@ -16,42 +16,137 @@ server.listen(5000, function() {
 });
 
 var players = {};
+var projectiles = {};
+var gameDimensions = { width: 2000, height: 2000 };
+
+var exists = id => {
+  if (id in players) return true;
+  else return false;
+};
+
+var addPlayer = id => {
+  if (!exists(id)) {
+    var newPlayer = {
+      health: 100,
+      position: { x: 100, y: 200, radius: 20 },
+      lastUpdateTime: 0,
+      speed: 30
+    };
+    players[id] = newPlayer;
+  }
+};
 
 var lastUpdateTime = new Date().getTime();
 
 io.on("connection", socket => {
-  socket.on("player", userData => {
-    if (!players[userData.username]) {
-      console.log(`${userData.username} has connected`);
+  var { id } = socket;
 
-      players[userData.username] = {
-        health: 100,
-        position: { x: 100, y: 100 }
-      };
-    }
+  addPlayer(id);
+
+  socket.on("fire", ({ position, target, id }) => {
+    createBullet(position, target, id);
   });
-  socket.on("updatePosition", ({ direction, username }) => {
-    moveLogic(username, direction);
+
+  const createBullet = (position, target, id) => {
+    let { angle, position: pos } = setAngle(position, target);
+    projectiles[id] = { angle, position: pos, id, damage: 10 };
+  };
+
+  socket.on("disconnect", () => {
+    delete players[id];
+  });
+
+  socket.on("playerUpdate", direction => {
+    moveLogic(id, direction);
   });
 });
 
 setInterval(() => {
-  io.sockets.emit("state", players);
+  checkHits();
+  updateProjectiles();
+  io.sockets.emit("state", { players, projectiles });
 }, 1000 / 60);
 
+const updateProjectiles = () => {
+  var speed = 30;
+  for (let id in projectiles) {
+    // delete projectiles[id];
+    let { x, y } = projectiles[id].position;
+    if (
+      x < 0 ||
+      x > gameDimensions.width ||
+      y < 0 ||
+      y > gameDimensions.height
+    ) {
+      delete projectiles[id];
+    } else {
+      projectiles[id].position.x += projectiles[id].angle.angleX * speed;
+      projectiles[id].position.y += projectiles[id].angle.angleY * speed;
+    }
+  }
+};
+
+const checkHits = () => {
+  for (let userID in players) {
+    for (let id in projectiles) {
+      checkBulletHit(userID, id);
+    }
+  }
+};
+
+const checkBulletHit = (playerId, bulletId) => {
+  var player = players[playerId];
+  var bullet = projectiles[bulletId];
+
+  if (!player || !bullet) return;
+
+  let bulletPos = bullet.position;
+  let playerPos = player.position;
+
+  let dx = bulletPos.x - playerPos.x;
+  let dy = bulletPos.y - playerPos.y;
+  let distance = Math.sqrt(dx * dx + dy * dy);
+
+  // console.log(
+  //   `distance: ${distance}  radiusSum: ${bulletPos.radius + playerPos.radius}`
+  // );
+
+  if (distance <= bulletPos.radius + playerPos.radius + 10) {
+    player.health -= bullet.damage;
+    if (player.health <= 0) delete players[playerId];
+    delete projectiles[bulletId];
+  }
+};
+
 const moveLogic = (id, direction) => {
-  let speed = 50;
+  let speed = 300;
   var player = players[id];
+  if (!player) return;
 
   // code ...
   var currentTime = new Date().getTime();
-  var timeDifference = currentTime - lastUpdateTime;
-  player.position.x += (5 * timeDifference * direction.x * speed) / 1000;
-  player.position.y += (5 * timeDifference * direction.y * speed) / 1000;
-  lastUpdateTime = currentTime;
+  var timeDifference = currentTime - player.lastUpdateTime;
+  player.position.x += (direction.x * speed * 1) / 100;
+  player.position.y += (direction.y * speed * 1) / 100;
+  player.lastUpdateTime = currentTime;
 
   //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)
   //   players[id].position.x += speed * direction.x;
   //   // if (y + direction.y * speed > 30 && y + direction.y * speed < height - 40)
   //   players[id].position.y += direction.y * speed;/
+};
+
+var setAngle = (position, target) => {
+  let deltaX = target.x - position.x;
+  let deltaY = target.y - position.y;
+
+  let angle = Math.atan2(deltaY, deltaX);
+
+  let angleX = Math.cos(angle);
+  let angleY = Math.sin(angle);
+
+  let x = position.x + 50 * Math.cos(angle);
+  let y = position.y + 50 * Math.sin(angle);
+
+  return { angle: { angleX, angleY }, position: { x, y, radius: 2 } };
 };

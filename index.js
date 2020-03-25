@@ -65,7 +65,6 @@ io.on("connection", socket => {
 setInterval(() => {
   checkHits();
   updateProjectiles();
-  console.log(players);
   io.sockets.emit("state", { players, projectiles });
 }, 1000 / 60);
 
@@ -132,8 +131,8 @@ const moveLogic = (id, direction) => {
   // code ...
   var currentTime = new Date().getTime();
   var timeDifference = currentTime - player.lastUpdateTime;
-  player.position.x += (direction.x * speed * 1) / 100;
-  player.position.y += (direction.y * speed * 1) / 100;
+  player.position.x += Math.floor((direction.x * speed * 1) / 100);
+  player.position.y += Math.floor((direction.y * speed * 1) / 100);
   player.lastUpdateTime = currentTime;
 
   //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)

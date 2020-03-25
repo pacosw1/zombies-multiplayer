@@ -131,8 +131,12 @@ const moveLogic = (id, direction) => {
   // code ...
   var currentTime = new Date().getTime();
   var timeDifference = currentTime - player.lastUpdateTime;
-  player.position.x += Math.floor((direction.x * speed * timeDifference) / 100);
-  player.position.y += Math.floor((direction.y * speed * timeDifference) / 100);
+  player.position.x += Math.floor(
+    (direction.x * speed * timeDifference) / 1000
+  );
+  player.position.y += Math.floor(
+    (direction.y * speed * timeDifference) / 1000
+  );
   player.lastUpdateTime = currentTime;
 
   //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)

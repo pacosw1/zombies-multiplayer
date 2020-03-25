@@ -67,7 +67,7 @@ setInterval(() => {
 }, 1000 / 15);
 
 const updateProjectiles = () => {
-  var speed = 30;
+  var speed = 8;
   for (let id in projectiles) {
     // delete projectiles[id];
     let { x, y } = projectiles[id].position;
@@ -118,7 +118,7 @@ const checkBulletHit = (playerId, bulletId) => {
 };
 
 const moveLogic = (id, direction) => {
-  let speed = 300;
+  let speed = 150;
   var player = players[id];
   if (!player) return;
 

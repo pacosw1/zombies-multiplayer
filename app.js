@@ -6,7 +6,6 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 app.set("port", 5000);
-app.use(express.static(path.join(__dirname, 'dist')));
 app.use("/static", express.static(__dirname + "/static")); // Routing
 app.get("/", (req, res) => {
   res.send({ message: "Welcome to Xombie API" });
@@ -43,8 +42,8 @@ io.on("connection", socket => {
 
   addPlayer(id);
 
-  socket.on("fire", ({ position, target, id, userId }) => {
-    createBullet(position, target, id, userId);
+  socket.on("fire", ({ position, target, userId, id }) => {
+    var id = createBullet(position, target, userId, id);
   });
 
   const createBullet = (position, target, userId, id) => {
@@ -65,7 +64,7 @@ setInterval(() => {
   checkHits();
   updateProjectiles();
   io.sockets.emit("state", { players, projectiles });
-}, 1000 / 60);
+}, 1000 / 15);
 
 const updateProjectiles = () => {
   var speed = 30;

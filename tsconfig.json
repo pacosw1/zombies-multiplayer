@@ -8,6 +8,6 @@
     "outDir": "./dist",
     "baseUrl": "./lib"
   },
-  "include": ["lib/**/*.ts"],
+  "include": ["lib/**/*.ts", "lib/app.js"],
   "exclude": ["node_modules"]
 }

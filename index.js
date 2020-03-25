@@ -6,7 +6,7 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 app.set("port", 5000);
-app.use(express.static(path.join(__dirname, 'dist')));	
+app.use(express.static(path.join(__dirname, "dist")));
 app.use("/static", express.static(__dirname + "/static")); // Routing
 
 app.get("/", (req, res) => {
@@ -65,6 +65,7 @@ io.on("connection", socket => {
 setInterval(() => {
   checkHits();
   updateProjectiles();
+  console.log(players);
   io.sockets.emit("state", { players, projectiles });
 }, 1000 / 60);
 
@@ -81,8 +82,12 @@ const updateProjectiles = () => {
     ) {
       delete projectiles[id];
     } else {
-      projectiles[id].position.x += projectiles[id].angle.angleX * speed;
-      projectiles[id].position.y += projectiles[id].angle.angleY * speed;
+      projectiles[id].position.x += Math.floor(
+        projectiles[id].angle.angleX * speed
+      );
+      projectiles[id].position.y += Math.floor(
+        projectiles[id].angle.angleY * speed
+      );
     }
   }
 };

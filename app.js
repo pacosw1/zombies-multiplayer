@@ -6,6 +6,7 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 app.set("port", 5000);
+app.use(express.static(path.join(__dirname, 'dist')));
 app.use("/static", express.static(__dirname + "/static")); // Routing
 app.get("/", (req, res) => {
   res.send({ message: "Welcome to Xombie API" });

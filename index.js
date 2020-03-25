@@ -18,7 +18,7 @@ server.listen(5000, function() {
 
 var players = {};
 var projectiles = {};
-var gameDimensions = { width: 2000, height: 2000 };
+var gameDimensions = { width: 1000, height: 1000 };
 
 var exists = id => {
   if (id in players) return true;

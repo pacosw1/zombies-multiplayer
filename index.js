@@ -124,19 +124,15 @@ const checkBulletHit = (playerId, bulletId) => {
 };
 
 const moveLogic = (id, direction) => {
-  let speed = 300;
+  let speed = 7;
   var player = players[id];
   if (!player) return;
 
   // code ...
   var currentTime = new Date().getTime();
   var timeDifference = currentTime - player.lastUpdateTime;
-  player.position.x += Math.floor(
-    (direction.x * speed * timeDifference) / 1000
-  );
-  player.position.y += Math.floor(
-    (direction.y * speed * timeDifference) / 1000
-  );
+  player.position.x += Math.floor(direction.x * speed);
+  player.position.y += Math.floor(direction.y * speed);
   player.lastUpdateTime = currentTime;
 
   //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)

@@ -58,15 +58,16 @@ io.on("connection", socket => {
   });
 
   socket.on("playerUpdate", direction => {
-    requestAnimationFrame(moveLogic(id, direction));
+    moveLogic(id, direction);
+
+    checkHits();
+    updateProjectiles();
+    io.sockets.emit("state", { players, projectiles });
   });
 });
 
-setInterval(() => {
-  checkHits();
-  updateProjectiles();
-  io.sockets.emit("state", { players, projectiles });
-}, 1000 / 60);
+// setInterval(() => {
+// }, 1000 / 60);
 
 const updateProjectiles = () => {
   var speed = 30;

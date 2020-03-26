@@ -58,7 +58,7 @@ io.on("connection", socket => {
   });
 
   socket.on("playerUpdate", direction => {
-    moveLogic(id, direction);
+    requestAnimationFrame(moveLogic(id, direction));
   });
 });
 
@@ -124,7 +124,7 @@ const checkBulletHit = (playerId, bulletId) => {
 };
 
 const moveLogic = (id, direction) => {
-  let speed = 8;
+  let speed = 4;
   var player = players[id];
   if (!player) return;
 

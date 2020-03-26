@@ -18,6 +18,7 @@ server.listen(5000, function() {
 
 var players = {};
 var projectiles = {};
+var messages = [];
 var gameDimensions = { width: 1000, height: 1000 };
 
 var exists = id => {
@@ -56,10 +57,26 @@ io.on("connection", socket => {
     delete players[id];
   });
 
-  socket.on("moveRequest", (direction, requestID) => {
-    moveLogic(id, direction, requestID);
+  socket.on("moveRequest", input => {
+    moveLogic(input);
   });
 });
+
+const moveLogic = input => {
+  let speed = 5;
+  var player = players[input.playerID];
+  if (!player) return;
+
+  // code ...
+  player.position.x += Math.floor(input.pressTimeX * speed * 100);
+  player.position.y += Math.round(input.pressTimeY * speed * 100);
+  player.lastCompletedSequence = input.sequenceID;
+
+  //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)
+  //   players[id].position.x += speed * direction.x;
+  //   // if (y + direction.y * speed > 30 && y + direction.y * speed < height - 40)
+  //   players[id].position.y += direction.y * speed;/
+};
 
 //projectile logic
 
@@ -116,23 +133,6 @@ const checkBulletHit = (playerId, bulletId) => {
     if (player.health <= 0) delete players[playerId];
     delete projectiles[bulletId];
   }
-};
-
-const moveLogic = (id, direction, requestID) => {
-  let speed = 4;
-  var player = players[id];
-  if (!player) return;
-
-  // code ...
-
-  player.position.x += Math.floor(direction.x * speed);
-  player.position.y += Math.floor(direction.y * speed);
-  player.requestCompleted = requestID;
-
-  //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)
-  //   players[id].position.x += speed * direction.x;
-  //   // if (y + direction.y * speed > 30 && y + direction.y * speed < height - 40)
-  //   players[id].position.y += direction.y * speed;/
 };
 
 var setAngle = (position, target) => {

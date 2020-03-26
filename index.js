@@ -21,7 +21,6 @@ var projectiles = {};
 var gameDimensions = { width: 1000, height: 1000 };
 
 //player logic
-
 var exists = id => {
   if (id in players) return true;
   else return false;
@@ -46,10 +45,10 @@ io.on("connection", socket => {
   var { id } = socket;
 
   addPlayer(id);
+
   //fire request
   socket.on("fire", ({ position, target, userId, id }) => {
     var id = createBullet(position, target, userId, id);
-    io.sockets.emit("state", { players, projectiles });
   });
 
   socket.on("disconnect", () => {
@@ -58,7 +57,6 @@ io.on("connection", socket => {
 
   socket.on("moveRequest", ({ direction, requestID }) => {
     moveLogic(id, direction, requestID);
-    io.sockets.emit("state", { players, projectiles });
   });
 });
 
@@ -163,4 +161,5 @@ var setAngle = (position, target) => {
 setInterval(() => {
   checkHits();
   updateProjectiles();
+  io.sockets.emit("state", { players, projectiles });
 }, 1000 / 60);

@@ -31,9 +31,8 @@ var addPlayer = id => {
     var newPlayer = {
       health: 100,
       position: { x: 100, y: 200, radius: 20 },
-      lastUpdateTime: 0,
       requestCompleted: "0",
-      speed: 30
+      positionBuffer: []
     };
     players[id] = newPlayer;
   }
@@ -45,6 +44,7 @@ io.on("connection", socket => {
   addPlayer(id);
 
   socket.on("fire", ({ position, target, userId, id }) => {
+    console.log("fire");
     createBullet(position, target, userId, id);
   });
 
@@ -63,13 +63,13 @@ io.on("connection", socket => {
 });
 
 const moveLogic = input => {
-  let speed = 5;
+  let speed = 3;
   var player = players[input.playerID];
   if (!player) return;
 
   // code ...
-  player.position.x += Math.floor(input.pressTimeX * speed * 100);
-  player.position.y += Math.round(input.pressTimeY * speed * 100);
+  player.position.x += input.pressTimeX * speed * 100;
+  player.position.y += input.pressTimeY * speed * 100;
   player.lastCompletedSequence = input.sequenceID;
 
   //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)
@@ -155,7 +155,5 @@ var setAngle = (position, target) => {
 setInterval(() => {
   checkHits();
   updateProjectiles();
-}, 1000 / 60);
-setInterval(() => {
   io.sockets.emit("state", { players, projectiles });
-}, 1000 / 10);
+}, 1000 / 25);

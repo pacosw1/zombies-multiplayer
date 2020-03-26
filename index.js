@@ -20,6 +20,8 @@ var players = {};
 var projectiles = {};
 var gameDimensions = { width: 1000, height: 1000 };
 
+//player logic
+
 var exists = id => {
   if (id in players) return true;
   else return false;
@@ -31,42 +33,36 @@ var addPlayer = id => {
       health: 100,
       position: { x: 100, y: 200, radius: 20 },
       lastUpdateTime: 0,
+      requestCompleted: "0",
       speed: 30
     };
     players[id] = newPlayer;
   }
 };
 
-var lastUpdateTime = new Date().getTime();
+//socket logic
 
 io.on("connection", socket => {
   var { id } = socket;
 
   addPlayer(id);
-
+  //fire request
   socket.on("fire", ({ position, target, userId, id }) => {
     var id = createBullet(position, target, userId, id);
+    io.sockets.emit("state", { players, projectiles });
   });
-
-  const createBullet = (position, target, userId, id) => {
-    let { angle, position: pos } = setAngle(position, target);
-    projectiles[id] = { angle, position: pos, id, damage: 10, userId };
-  };
 
   socket.on("disconnect", () => {
     delete players[id];
   });
 
-  socket.on("playerUpdate", direction => {
-    moveLogic(id, direction);
+  socket.on("moveRequest", ({ direction, requestID }) => {
+    moveLogic(id, direction, requestID);
+    io.sockets.emit("state", { players, projectiles });
   });
 });
 
-setInterval(() => {
-  checkHits();
-  updateProjectiles();
-  io.sockets.emit("state", { players, projectiles });
-}, 1000 / 60);
+//projectile logic
 
 const updateProjectiles = () => {
   var speed = 30;
@@ -89,6 +85,11 @@ const updateProjectiles = () => {
       );
     }
   }
+};
+
+const createBullet = (position, target, userId, id) => {
+  let { angle, position: pos } = setAngle(position, target);
+  projectiles[id] = { angle, position: pos, id, damage: 10, userId };
 };
 
 const checkHits = () => {
@@ -123,7 +124,7 @@ const checkBulletHit = (playerId, bulletId) => {
   }
 };
 
-const moveLogic = (id, direction) => {
+const moveLogic = (id, direction, requestID) => {
   let speed = 4;
   var player = players[id];
   if (!player) return;
@@ -134,6 +135,7 @@ const moveLogic = (id, direction) => {
   player.position.x += Math.floor(direction.x * speed);
   player.position.y += Math.floor(direction.y * speed);
   player.lastUpdateTime = currentTime;
+  player.requestCompleted = requestID;
 
   //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)
   //   players[id].position.x += speed * direction.x;
@@ -155,3 +157,10 @@ var setAngle = (position, target) => {
 
   return { angle: { angleX, angleY }, position: { x, y, radius: 2 } };
 };
+
+//send updates
+
+setInterval(() => {
+  checkHits();
+  updateProjectiles();
+}, 1000 / 60);

@@ -6,7 +6,7 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 app.set("port", 5000);
-app.use(express.static(path.join(__dirname, "dist")));
+// app.use(express.static(path.join(__dirname, "dist")));
 app.use("/static", express.static(__dirname + "/static")); // Routing
 
 app.get("/", (req, res) => {
@@ -20,7 +20,6 @@ var players = {};
 var projectiles = {};
 var gameDimensions = { width: 1000, height: 1000 };
 
-//player logic
 var exists = id => {
   if (id in players) return true;
   else return false;
@@ -39,23 +38,25 @@ var addPlayer = id => {
   }
 };
 
-//socket logic
-
 io.on("connection", socket => {
   var { id } = socket;
 
   addPlayer(id);
 
-  //fire request
   socket.on("fire", ({ position, target, userId, id }) => {
-    var id = createBullet(position, target, userId, id);
+    createBullet(position, target, userId, id);
   });
+
+  const createBullet = (position, target, userId, id) => {
+    let { angle, position: pos } = setAngle(position, target);
+    projectiles[id] = { angle, position: pos, id, damage: 10, userId };
+  };
 
   socket.on("disconnect", () => {
     delete players[id];
   });
 
-  socket.on("moveRequest", ({ direction, requestID }) => {
+  socket.on("moveRequest", (direction, requestID) => {
     moveLogic(id, direction, requestID);
   });
 });
@@ -83,11 +84,6 @@ const updateProjectiles = () => {
       );
     }
   }
-};
-
-const createBullet = (position, target, userId, id) => {
-  let { angle, position: pos } = setAngle(position, target);
-  projectiles[id] = { angle, position: pos, id, damage: 10, userId };
 };
 
 const checkHits = () => {
@@ -128,11 +124,9 @@ const moveLogic = (id, direction, requestID) => {
   if (!player) return;
 
   // code ...
-  var currentTime = new Date().getTime();
-  var timeDifference = currentTime - player.lastUpdateTime;
+
   player.position.x += Math.floor(direction.x * speed);
   player.position.y += Math.floor(direction.y * speed);
-  player.lastUpdateTime = currentTime;
   player.requestCompleted = requestID;
 
   //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)

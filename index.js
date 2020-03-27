@@ -44,7 +44,6 @@ io.on("connection", socket => {
   addPlayer(id);
 
   socket.on("fire", ({ position, target, userId, id }) => {
-    console.log("fire");
     createBullet(position, target, userId, id);
   });
 
@@ -154,6 +153,7 @@ var setAngle = (position, target) => {
 
 setInterval(() => {
   checkHits();
+
   updateProjectiles();
   io.sockets.emit("state", { players, projectiles });
-}, 1000 / 25);
+}, 1000 / 30);

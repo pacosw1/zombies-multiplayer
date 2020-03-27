@@ -31,8 +31,7 @@ var addPlayer = id => {
     var newPlayer = {
       health: 100,
       position: { x: 100, y: 200, radius: 20 },
-      requestCompleted: "0",
-      positionBuffer: []
+      requestCompleted: "0"
     };
     players[id] = newPlayer;
   }
@@ -80,7 +79,7 @@ const moveLogic = input => {
 //projectile logic
 
 const updateProjectiles = () => {
-  var speed = 30;
+  var speed = 50;
   for (let id in projectiles) {
     // delete projectiles[id];
     let { x, y } = projectiles[id].position;
@@ -143,8 +142,8 @@ var setAngle = (position, target) => {
   let angleX = Math.cos(angle);
   let angleY = Math.sin(angle);
 
-  let x = position.x + 50 * Math.cos(angle);
-  let y = position.y + 50 * Math.sin(angle);
+  let x = position.x + 1 * Math.cos(angle);
+  let y = position.y + 1 * Math.sin(angle);
 
   return { angle: { angleX, angleY }, position: { x, y, radius: 2 } };
 };

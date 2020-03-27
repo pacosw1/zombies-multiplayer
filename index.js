@@ -18,8 +18,7 @@ server.listen(5000, function() {
 
 var players = {};
 var projectiles = {};
-var messages = [];
-var gameDimensions = { width: 1000, height: 1000 };
+var gameDimensions = { width: 1000, height: 800 };
 
 var exists = id => {
   if (id in players) return true;
@@ -46,11 +45,6 @@ io.on("connection", socket => {
     createBullet(position, target, userId, id);
   });
 
-  const createBullet = (position, target, userId, id) => {
-    let { angle, position: pos } = setAngle(position, target);
-    projectiles[id] = { angle, position: pos, id, damage: 10, userId };
-  };
-
   socket.on("disconnect", () => {
     delete players[id];
   });
@@ -60,26 +54,25 @@ io.on("connection", socket => {
   });
 });
 
+const createBullet = (position, target, userId, id) => {
+  let { angle, position: pos } = setAngle(position, target);
+  projectiles[id] = { angle, position: pos, id, damage: 10, userId };
+};
+
 const moveLogic = input => {
   let speed = 3;
-  var player = players[input.playerID];
+  let player = players[input.playerID];
   if (!player) return;
 
-  // code ...
   player.position.x += input.pressTimeX * speed * 100;
   player.position.y += input.pressTimeY * speed * 100;
   player.lastCompletedSequence = input.sequenceID;
-
-  //   // if (x + speed * direction.x > 30 && x + speed * direction.x < width - 20)
-  //   players[id].position.x += speed * direction.x;
-  //   // if (y + direction.y * speed > 30 && y + direction.y * speed < height - 40)
-  //   players[id].position.y += direction.y * speed;/
 };
 
 //projectile logic
 
 const updateProjectiles = () => {
-  var speed = 10;
+  var speed = 70;
   for (let id in projectiles) {
     // delete projectiles[id];
     let { x, y } = projectiles[id].position;
@@ -117,7 +110,6 @@ const checkBulletHit = (playerId, bulletId) => {
 
   let bulletPos = bullet.position;
 
-  console.log(bulletPos);
   let playerPos = player.position;
 
   let dx = bulletPos.x - playerPos.x;
@@ -156,5 +148,6 @@ var setAngle = (position, target) => {
 setInterval(() => {
   updateProjectiles();
   checkHits();
-  io.sockets.emit("state", { players, projectiles });
+  let timeStamp = +new Date();
+  io.sockets.emit("state", { players, projectiles, timeStamp });
 }, 1000 / 10);

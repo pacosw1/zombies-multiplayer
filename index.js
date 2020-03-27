@@ -150,4 +150,4 @@ setInterval(() => {
   checkHits();
   let timeStamp = +new Date();
   io.sockets.emit("state", { players, projectiles, timeStamp });
-}, 1000 / 10);
+}, 1000 / 30);

@@ -156,4 +156,4 @@ setInterval(() => {
 
   updateProjectiles();
   io.sockets.emit("state", { players, projectiles });
-}, 1000 / 30);
+}, 1000 / 10);

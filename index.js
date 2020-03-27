@@ -47,8 +47,8 @@ io.on("connection", socket => {
   });
 
   const createBullet = (position, target, userId, id) => {
-    let { angle, position: pos } = setAngle(position, target);
-    projectiles[id] = { angle, position: pos, id, damage: 10, userId };
+    let { angle } = setAngle(position, target);
+    projectiles[id] = { angle, position, id, damage: 10, userId };
   };
 
   socket.on("disconnect", () => {
@@ -142,10 +142,7 @@ var setAngle = (position, target) => {
   let angleX = Math.cos(angle);
   let angleY = Math.sin(angle);
 
-  let x = position.x + 1 * Math.cos(angle);
-  let y = position.y + 1 * Math.sin(angle);
-
-  return { angle: { angleX, angleY }, position: { x, y, radius: 2 } };
+  return { angle: { angleX, angleY } };
 };
 
 //send updates

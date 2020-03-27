@@ -156,6 +156,5 @@ var setAngle = (position, target) => {
 setInterval(() => {
   updateProjectiles();
   checkHits();
-
   io.sockets.emit("state", { players, projectiles });
 }, 1000 / 60);

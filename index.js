@@ -79,7 +79,7 @@ const moveLogic = input => {
 //projectile logic
 
 const updateProjectiles = () => {
-  var speed = 50;
+  var speed = 80;
   for (let id in projectiles) {
     // delete projectiles[id];
     let { x, y } = projectiles[id].position;

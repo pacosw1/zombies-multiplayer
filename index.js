@@ -113,7 +113,7 @@ const moveLogic = (input, id) => {
 //projectile logic
 
 const updateProjectiles = () => {
-  var speed = 70;
+  var speed = 25;
 
   for (let id in projectiles) {
     let curr = projectiles[id];
@@ -182,12 +182,11 @@ var setAngle = (position, target) => {
 //send updates
 
 setInterval(() => {
-  let timeStamp = +new Date();
   updateProjectiles();
   checkHits();
 
   var encoded = encodeProjectiles();
-  io.sockets.emit("state", { players, projectiles: encoded, timeStamp });
+  io.sockets.emit("state", { players, projectiles: encoded });
 }, 1000 / 30);
 
 var decode = (array, type) => {

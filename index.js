@@ -188,7 +188,7 @@ setInterval(() => {
 
   var encoded = encodeProjectiles();
   io.sockets.emit("state", { players, projectiles: encoded, timeStamp });
-}, 1000 / 10);
+}, 1000 / 30);
 
 var decode = (array, type) => {
   if (type == "bullet") {

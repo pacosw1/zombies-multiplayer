@@ -6,6 +6,8 @@ var socketIO = require("socket.io");
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server, { transports: ["websocket"] });
+
+var { encodePlayers } = require("./network/utils");
 app.set("port", 5000);
 app.use(express.static(path.join(__dirname, "dist")));
 app.use("/static", express.static(__dirname + "/static")); // Routing
@@ -184,6 +186,9 @@ var setAngle = (position, target) => {
 setInterval(() => {
   updateProjectiles();
   checkHits();
+
+  var binary = encodePlayers(players);
+  console.log(binary);
 
   var encoded = encodeProjectiles();
   io.sockets.emit("state", { players, projectiles: encoded });

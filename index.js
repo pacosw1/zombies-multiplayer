@@ -19,7 +19,7 @@ server.listen(5000, function() {
 
 var players = {};
 var projectiles = {};
-var gameDimensions = { width: 1000, height: 800 };
+var gameDimensions = { width: 800, height: 800 };
 
 var exists = id => {
   if (id in players) return true;
@@ -90,7 +90,7 @@ var addPlayer = id => {
 setInterval(() => {
   // console.log(players);
   update();
-}, 1000 / 10);
+}, 1000 / 30);
 
 var players = {
   // "1": {

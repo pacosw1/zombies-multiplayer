@@ -90,7 +90,7 @@ var addPlayer = id => {
 setInterval(() => {
   // console.log(players);
   update();
-}, 1000 / 30);
+}, 1000 / 10);
 
 var players = {
   // "1": {

@@ -2,10 +2,8 @@ var express = require("express");
 var http = require("http");
 var path = require("path");
 var WebSocket = require("ws");
-var socketIO = require("socket.io");
 var app = express();
 var server = http.Server(app);
-var io = socketIO(server, { transports: ["websocket"] });
 
 var { encodePlayers, decodeMovement } = require("./network/utils");
 app.set("port", 5000);

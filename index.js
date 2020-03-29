@@ -60,7 +60,6 @@ web.on("connection", socket => {
       socket.send(buffer);
     } else {
       //different cases for messages
-      console.log(socket.binaryType);
       let view = new Uint8Array(data);
       if (view[0] == 2) {
         let input = decodeMovement(data);
@@ -83,7 +82,7 @@ var addPlayer = id => {
   if (!exists(id)) {
     var newPlayer = {
       health: 100,
-      position: { x: 100, y: 200, radius: 30 },
+      position: { x: 0, y: 0, radius: 30 },
       sequenceID: 0
     };
     players[id] = newPlayer;
@@ -328,12 +327,12 @@ var players = {
 // };
 
 const moveLogic = (input, id) => {
-  let speed = 3;
+  let speed = 1;
   let player = players[id];
   if (!player) return;
 
-  player.position.x += Math.floor(input.pressX * speed * 100);
-  player.position.y += Math.floor(input.pressY * speed * 100);
+  player.position.x += Math.floor(input.pressX * speed);
+  player.position.y += Math.floor(input.pressY * speed);
   player.sequenceID = input.sequenceID;
 };
 

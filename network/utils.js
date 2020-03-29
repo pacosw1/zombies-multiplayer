@@ -10,17 +10,26 @@ exports.encodePlayers = players => {
   return gameState;
 };
 
+decodeNodeBuffer = nodeBuffer => {
+  let arrayBuffer = new ArrayBuffer(nodeBuffer.length);
+  let view8 = new Int8Array(arrayBuffer);
+  let view32 = new Uint32Array(arrayBuffer);
+  let i = 0;
+  for (let i = 0; i < nodeBuffer.length; i++) {
+    view8[i] = nodeBuffer[i];
+  }
+  return arrayBuffer;
+};
+
 exports.decodeMovement = buffer => {
-  console.info(buffer);
+  buffer = decodeNodeBuffer(buffer);
   let view32 = new Int32Array(buffer, 4, 1);
   let view8 = new Int8Array(buffer, 0, 3);
 
-  console.log(view32);
-
   return {
     sequenceID: view32[0],
-    pressX: view8[1] / 1000,
-    pressY: view8[2] / 1000
+    pressX: view8[1],
+    pressY: view8[2]
   };
 };
 

@@ -10,8 +10,21 @@ exports.encodePlayers = players => {
   return gameState;
 };
 
+exports.decodeMovement = buffer => {
+  console.info(buffer);
+  let view32 = new Int32Array(buffer, 4, 1);
+  let view8 = new Int8Array(buffer, 0, 3);
+
+  console.log(view32);
+
+  return {
+    sequenceID: view32[0],
+    pressX: view8[1] / 1000,
+    pressY: view8[2] / 1000
+  };
+};
+
 const encodePlayer = (gameState, players, ID, start) => {
-  console.log(ID);
   let view32 = new Uint32Array(gameState, start, 1);
   let view8 = new Uint8Array(gameState, start + 4, 4);
 

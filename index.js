@@ -6,6 +6,7 @@ var app = express();
 var server = http.Server(app);
 
 var { encodePlayers, decodeMovement } = require("./network/utils");
+var { Simulation } = require("./simulation/Simulation");
 app.set("port", 5000);
 app.use(express.static(path.join(__dirname, "dist")));
 app.use("/static", express.static(__dirname + "/static")); // Routing
@@ -28,7 +29,9 @@ var exists = id => {
 
 const web = new WebSocket.Server({ server });
 
-var players = {};
+var simulation = new Simulation();
+
+simulation.start();
 
 // var generateID = storage => {
 //   //create 8 digit random id
@@ -43,14 +46,15 @@ var players = {};
 
 web.on("connection", socket => {
   socket.onclose = () => {
-    delete players[socket.id];
+    simulation.requests.queue({ type: 4, userID: socket.id });
   };
 
   socket.onmessage = ({ data }) => {
     if (data.byteLength == 0) {
       var id = generate();
-      addPlayer(id);
       socket.id = id;
+      simulation.requests.queue({ type: 0, userID: id });
+
       let buffer = new ArrayBuffer(2);
       let view = new Uint8Array(buffer);
       view[0] = 1;
@@ -60,8 +64,11 @@ web.on("connection", socket => {
       //different cases for messages
       let view = new Uint8Array(data);
       if (view[0] == 2) {
-        let input = decodeMovement(data);
-        moveLogic(input, socket.id);
+        simulation.requests.queue({
+          type: 1,
+          payload: data,
+          userID: socket.id
+        });
       }
     }
   };
@@ -70,9 +77,8 @@ web.on("connection", socket => {
 var encoded;
 
 const update = () => {
-  encoded = encodePlayers(players);
   web.clients.forEach(client => {
-    client.send(encoded);
+    client.send(encodePlayers(simulation.players));
   });
 };
 
@@ -88,232 +94,8 @@ var addPlayer = id => {
 };
 
 setInterval(() => {
-  // console.log(players);
   update();
-}, 1000 / 10);
-
-var players = {
-  // "1": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "2": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "3": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "4": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "5": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // }
-  // "6": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "7": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "8": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "9": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "10": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // }
-  // "11": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "12": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "13": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "14": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "15": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "16": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "17": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "18": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "19": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "20": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "21": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "22": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "23": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "24": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "25": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "26": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "27": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "28": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "29": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "30": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "31": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "32": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "33": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "34": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "35": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "36": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "37": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "38": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "39": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // },
-  // "40": {
-  //   health: 100,
-  //   position: { x: 0, y: 0 },
-  //   sequenceID: 12323
-  // }
-};
-
-// io.on("connection", socket => {
-//   var { id } = socket;
-
-//   addPlayer(id);
-
-//   socket.on("fire", array => {
-//     let { position, target } = decode(array, "bullet");
-
-//     createBullet(position, target, socket.id);
-//   });
-
-//   socket.on("disconnect", () => {
-//     delete players[id];
-//   });
-
-//   socket.on("moveRequest", input => {
-//     moveLogic(input, socket.id);
-//   });
-// });
+}, 1000.0 / 10);
 
 // const createBullet = (position, target, userID) => {
 //   let angle = setAngle(position, target);
@@ -323,16 +105,6 @@ var players = {
 //   position.y += Math.floor(angle.y * 20);
 //   projectiles[ID] = { position, angle, userID };
 // };
-
-const moveLogic = (input, id) => {
-  let speed = 1;
-  let player = players[id];
-  if (!player) return;
-
-  player.position.x += Math.floor(input.pressX * speed);
-  player.position.y += Math.floor(input.pressY * speed);
-  player.sequenceID = input.sequenceID;
-};
 
 // //projectile logic
 

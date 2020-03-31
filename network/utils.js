@@ -40,8 +40,8 @@ exports.decodeMovement = buffer => {
   let view8 = new Int8Array(buffer, 1, 2);
   return {
     sequenceID: viewUnsigned[0],
-    pressX: view8[1] / 1000,
-    pressY: view8[2] / 1000
+    pressX: view8[1],
+    pressY: view8[2]
   };
 };
 

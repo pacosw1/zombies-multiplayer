@@ -130,7 +130,7 @@ class Simulation {
       var { x: aX, y: aY } = angle;
       let { x, y } = position;
 
-      if (x < 0 || x > 2000 || y < 0 || y > 1000) {
+      if (x < 0 || x > 1400 || y < 0 || y > 1000) {
         delete this.projectiles[id];
       } else {
         curr.position.x += Math.floor(aX * speed);
@@ -158,8 +158,7 @@ class Simulation {
 
   tick() {
     self.update();
-    self.updateProjectiles();
-    // self.checkHits();
+    self.checkHits();
   }
 }
 

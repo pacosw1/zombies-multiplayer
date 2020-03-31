@@ -30,7 +30,7 @@ class Queue {
     if (!this.empty()) {
       let old = this.head;
       this.head = this.head.next;
-      delete old;
+      old = null;
       this.len--;
     }
   }

@@ -159,7 +159,7 @@ class Simulation {
   tick() {
     self.update();
     self.updateProjectiles();
-    self.checkHits();
+    // self.checkHits();
   }
 }
 

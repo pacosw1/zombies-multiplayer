@@ -81,9 +81,9 @@ web.on("connection", socket => {
 var encoded;
 
 const update = () => {
-  // console.log(simulation.players);
+  encoded = encodePlayers(simulation.players, simulation.projectiles);
   web.clients.forEach(client => {
-    client.send(encodePlayers(simulation.players, simulation.projectiles));
+    client.send(encoded);
   });
 };
 

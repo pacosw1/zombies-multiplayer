@@ -20,6 +20,8 @@ class Simulation {
       self.processRequest(request);
       this.requests.dequeue();
     }
+    self.updateProjectiles();
+    self.checkHits();
   }
 
   processRequest(request) {
@@ -117,7 +119,6 @@ class Simulation {
 
     if (this.projectiles[num]) self.generateID();
     else return num;
-    console.log(num);
   }
 
   updateProjectiles() {
@@ -158,7 +159,6 @@ class Simulation {
 
   tick() {
     self.update();
-    self.checkHits();
   }
 }
 

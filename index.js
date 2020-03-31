@@ -18,8 +18,6 @@ server.listen(5000, function() {
   console.log("Starting server on port 5000");
 });
 
-var players = {};
-var projectiles = {};
 var gameDimensions = { width: 800, height: 800 };
 
 var exists = id => {
@@ -69,6 +67,12 @@ web.on("connection", socket => {
           payload: data,
           userID: socket.id
         });
+      } else if (view[0] == 3) {
+        simulation.requests.queue({
+          type: 2,
+          payload: data,
+          userID: socket.id
+        });
       }
     }
   };
@@ -77,8 +81,9 @@ web.on("connection", socket => {
 var encoded;
 
 const update = () => {
+  // console.log(simulation.players);
   web.clients.forEach(client => {
-    client.send(encodePlayers(simulation.players));
+    client.send(encodePlayers(simulation.players, simulation.projectiles));
   });
 };
 
@@ -129,37 +134,6 @@ setInterval(() => {
 //       curr.position.x += Math.floor(aX * speed);
 //       curr.position.y += Math.floor(aY * speed);
 //     }
-//   }
-// };
-
-// const checkHits = () => {
-//   for (let userID in players) {
-//     for (let id in projectiles) {
-//       if (projectiles[id].userID != userID) checkBulletHit(userID, id);
-//     }
-//   }
-// };
-
-// const checkBulletHit = (playerId, bulletId) => {
-//   var player = players[playerId];
-//   var bullet = projectiles[bulletId];
-
-//   if (!player || !bullet || bullet.userId === playerId) return;
-
-//   let bulletPos = bullet.position;
-
-//   let playerPos = player.position;
-
-//   let dx = bulletPos.x - playerPos.x;
-//   let dy = bulletPos.y - playerPos.y;
-
-//   let distance = Math.sqrt(dx * dx + dy * dy);
-
-//   if (distance <= bulletPos.radius + playerPos.radius + 10) {
-//     player.health -= 10;
-//     if (player.health <= 0) delete players[playerId];
-
-//     delete projectiles[bulletId];
 //   }
 // };
 
@@ -222,17 +196,6 @@ var encode = (object, type) => {
 
 var generate = () => {
   var id = Math.floor(Math.random() * 100);
-  if (players[id]) generate();
+  if (simulation.players[id]) generate();
   else return id;
-};
-
-var generateID = () => {
-  //create 8 digit random id
-  let str = "";
-  for (let i = 0; i < 5; i++) {
-    if (i % 2 == 0) str += Math.floor(Math.random() * 9);
-    else str += String.fromCharCode(Math.floor(Math.random() * (89 - 65) + 65));
-  }
-  if (projectiles[str]) generateID();
-  else return str;
 };

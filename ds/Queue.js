@@ -28,7 +28,9 @@ class Queue {
   }
   dequeue() {
     if (!this.empty()) {
+      let old = this.head;
       this.head = this.head.next;
+      delete old;
       this.len--;
     }
   }

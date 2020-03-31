@@ -65,6 +65,25 @@ web.on("connection", socket => {
   };
 });
 
+const updateProjectiles = () => {
+  var speed = 15;
+
+  for (let id in simulation.projectiles) {
+    let curr = simulation.projectiles[id];
+    let { position, angle } = curr;
+
+    var { x: aX, y: aY } = angle;
+    let { x, y } = position;
+
+    if (x < 0 || x > 1400 || y < 0 || y > 1000) {
+      delete simulation.projectiles[id];
+    } else {
+      curr.position.x += Math.floor(aX * speed);
+      curr.position.y += Math.floor(aY * speed);
+    }
+  }
+};
+
 var generate = () => {
   var id = Math.floor(Math.random() * 100);
   if (simulation.players[id]) generate();
@@ -81,5 +100,6 @@ const update = () => {
 };
 
 setInterval(() => {
+  updateProjectiles();
   update();
-}, 1000.0 / 10);
+}, 1000.0 / 60);

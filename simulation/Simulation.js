@@ -15,25 +15,25 @@ class Simulation {
   }
 
   update() {
+    self.updateProjectiles();
+    self.checkHits();
     if (!this.requests.empty()) {
       let request = this.requests.peek();
       self.processRequest(request);
       this.requests.dequeue();
     }
-    self.updateProjectiles();
-    self.checkHits();
   }
 
   processRequest(request) {
     switch (request.type) {
-      case 0:
-        self.addPlayer(request.userID);
+      case 2:
+        self.addProjectile(request.userID, request.payload);
         break;
       case 1:
         self.moveLogic(request.payload, request.userID);
         break;
-      case 2:
-        self.addProjectile(request.userID, request.payload);
+      case 0:
+        self.addPlayer(request.userID);
         break;
       case 4:
         delete this.players[request.userID];

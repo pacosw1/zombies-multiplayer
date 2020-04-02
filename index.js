@@ -84,4 +84,5 @@ const update = () => {
 
 setInterval(() => {
   update();
+  console.log(send);
 }, 1000.0 / 10);

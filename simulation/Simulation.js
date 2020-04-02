@@ -15,26 +15,25 @@ class Simulation {
   }
 
   update() {
-    // self.checkHits();
-    self.updateProjectiles();
-
-    while (!this.requests.empty()) {
+    if (!this.requests.empty()) {
       let request = this.requests.peek();
       self.processRequest(request);
       this.requests.dequeue();
     }
+    self.updateProjectiles();
+    self.checkHits();
   }
 
   processRequest(request) {
     switch (request.type) {
-      case 2:
-        self.addProjectile(request.userID, request.payload);
+      case 0:
+        self.addPlayer(request.userID);
         break;
       case 1:
         self.moveLogic(request.payload, request.userID);
         break;
-      case 0:
-        self.addPlayer(request.userID);
+      case 2:
+        self.addProjectile(request.userID, request.payload);
         break;
       case 4:
         delete this.players[request.userID];
@@ -89,8 +88,8 @@ class Simulation {
 
     let playerPos = player.position;
 
-    let dx = bulletPos.x - (playerPos.x + 30);
-    let dy = bulletPos.y - (playerPos.y + 30);
+    let dx = bulletPos.x - playerPos.x;
+    let dy = bulletPos.y - playerPos.y;
 
     let distance = Math.sqrt(dx * dx + dy * dy);
 
@@ -123,7 +122,7 @@ class Simulation {
   }
 
   updateProjectiles() {
-    var speed = 4;
+    var speed = 15;
 
     for (let id in this.projectiles) {
       let curr = this.projectiles[id];
@@ -132,11 +131,11 @@ class Simulation {
       var { x: aX, y: aY } = angle;
       let { x, y } = position;
 
-      if (x < 0 || x > 800 || y < 0 || y > 800) {
+      if (x < 0 || x > 1400 || y < 0 || y > 1000) {
         delete this.projectiles[id];
       } else {
-        curr.position.x += aX * speed;
-        curr.position.y += aY * speed;
+        curr.position.x += Math.floor(aX * speed);
+        curr.position.y += Math.floor(aY * speed);
       }
     }
   }

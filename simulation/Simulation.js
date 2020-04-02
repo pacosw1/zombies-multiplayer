@@ -15,13 +15,14 @@ class Simulation {
   }
 
   update() {
-    self.updateProjectiles();
     // self.checkHits();
-    // while (!this.requests.empty()) {
-    //   let request = this.requests.peek();
-    //   self.processRequest(request);
-    //   this.requests.dequeue();
-    // }
+    self.updateProjectiles();
+
+    while (!this.requests.empty()) {
+      let request = this.requests.peek();
+      self.processRequest(request);
+      this.requests.dequeue();
+    }
   }
 
   processRequest(request) {
@@ -131,7 +132,7 @@ class Simulation {
       var { x: aX, y: aY } = angle;
       let { x, y } = position;
 
-      if (x < 0 || x > 1400 || y < 0 || y > 1000) {
+      if (x < 0 || x > 800 || y < 0 || y > 800) {
         delete this.projectiles[id];
       } else {
         curr.position.x += Math.floor(aX * speed);

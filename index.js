@@ -36,7 +36,6 @@ web.on("connection", socket => {
 
   socket.onmessage = ({ data }) => {
     if (data.byteLength == 0) {
-      console.log("connect");
       var id = generate();
       socket.id = id;
       simulation.requests.queue({ type: 0, userID: id });

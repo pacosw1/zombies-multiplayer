@@ -16,7 +16,7 @@ class Simulation {
 
   update() {
     self.updateProjectiles();
-    self.checkHits();
+    // self.checkHits();
     while (!this.requests.empty()) {
       let request = this.requests.peek();
       self.processRequest(request);
@@ -122,7 +122,7 @@ class Simulation {
   }
 
   updateProjectiles() {
-    var speed = 15;
+    var speed = 2;
 
     for (let id in this.projectiles) {
       let curr = this.projectiles[id];

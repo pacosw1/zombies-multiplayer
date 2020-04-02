@@ -17,11 +17,11 @@ class Simulation {
   update() {
     self.updateProjectiles();
     // self.checkHits();
-    while (!this.requests.empty()) {
-      let request = this.requests.peek();
-      self.processRequest(request);
-      this.requests.dequeue();
-    }
+    // while (!this.requests.empty()) {
+    //   let request = this.requests.peek();
+    //   self.processRequest(request);
+    //   this.requests.dequeue();
+    // }
   }
 
   processRequest(request) {

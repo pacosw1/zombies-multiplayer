@@ -36,6 +36,7 @@ web.on("connection", socket => {
 
   socket.onmessage = ({ data }) => {
     if (data.byteLength == 0) {
+      console.log("connect");
       var id = generate();
       socket.id = id;
       simulation.requests.queue({ type: 0, userID: id });
@@ -46,6 +47,7 @@ web.on("connection", socket => {
       view[1] = socket.id;
       socket.send(buffer);
     } else {
+      console.log("other message");
       //different cases for messages
       let view = new Uint8Array(data);
       if (view[0] == 2) {

@@ -23,7 +23,6 @@ class Simulation {
       self.processRequest(request);
       this.requests.dequeue();
     }
-    console.log(this.requests.size());
   }
 
   processRequest(request) {
@@ -124,7 +123,7 @@ class Simulation {
   }
 
   updateProjectiles() {
-    var speed = 2;
+    var speed = 4;
 
     for (let id in this.projectiles) {
       let curr = this.projectiles[id];
@@ -136,8 +135,8 @@ class Simulation {
       // if (x < 0 || x > 800 || y < 0 || y > 800) {
       //   delete this.projectiles[id];
       // } else {
-      curr.position.x += Math.floor(aX * speed);
-      curr.position.y += Math.floor(aY * speed);
+      curr.position.x += aX * speed;
+      curr.position.y += aY * speed;
       // }
     }
   }
@@ -149,8 +148,8 @@ class Simulation {
 
     let player = this.players[ID];
 
-    player.position.x += Math.floor(pressX * speed);
-    player.position.y += Math.floor(pressY * speed);
+    player.position.x += pressX * speed;
+    player.position.y += pressY * speed;
 
     player.sequenceID = sequenceID;
   }

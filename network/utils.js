@@ -76,6 +76,6 @@ const encodePlayer = (gameState, players, ID, start) => {
   view8[0] = ID;
   view8[1] = player.health;
   //player position
-  view16[1] = player.position.x;
-  view16[2] = player.position.y;
+  view16[1] = Math.floor(player.position.x);
+  view16[2] = Math.floor(player.position.y);
 };

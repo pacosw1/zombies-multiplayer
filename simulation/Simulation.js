@@ -132,12 +132,12 @@ class Simulation {
       var { x: aX, y: aY } = angle;
       let { x, y } = position;
 
-      if (x < 0 || x > 800 || y < 0 || y > 800) {
-        delete this.projectiles[id];
-      } else {
-        curr.position.x += Math.floor(aX * speed);
-        curr.position.y += Math.floor(aY * speed);
-      }
+      // if (x < 0 || x > 800 || y < 0 || y > 800) {
+      //   delete this.projectiles[id];
+      // } else {
+      curr.position.x += Math.floor(aX * speed);
+      curr.position.y += Math.floor(aY * speed);
+      // }
     }
   }
 

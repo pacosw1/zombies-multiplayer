@@ -23,7 +23,7 @@ class Simulation {
       self.processRequest(request);
       this.requests.dequeue();
     }
-    console.log(queue.size());
+    console.log(qthis.requests.size());
   }
 
   processRequest(request) {

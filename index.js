@@ -47,7 +47,6 @@ web.on("connection", socket => {
       view[1] = socket.id;
       socket.send(buffer);
     } else {
-      console.log("other message");
       //different cases for messages
       let view = new Uint8Array(data);
       if (view[0] == 2) {
@@ -84,5 +83,4 @@ const update = () => {
 
 setInterval(() => {
   update();
-  console.log(send);
 }, 1000.0 / 10);

@@ -88,8 +88,8 @@ class Simulation {
 
     let playerPos = player.position;
 
-    let dx = bulletPos.x - playerPos.x;
-    let dy = bulletPos.y - playerPos.y;
+    let dx = bulletPos.x - (playerPos.x + 30);
+    let dy = bulletPos.y - (playerPos.y + 30);
 
     let distance = Math.sqrt(dx * dx + dy * dy);
 
@@ -121,6 +121,25 @@ class Simulation {
     else return num;
   }
 
+  updateProjectiles() {
+    var speed = 15;
+
+    for (let id in this.projectiles) {
+      let curr = this.projectiles[id];
+      let { position, angle } = curr;
+
+      var { x: aX, y: aY } = angle;
+      let { x, y } = position;
+
+      if (x < 0 || x > 1400 || y < 0 || y > 1000) {
+        delete this.projectiles[id];
+      } else {
+        curr.position.x += Math.floor(aX * speed);
+        curr.position.y += Math.floor(aY * speed);
+      }
+    }
+  }
+
   moveLogic(payload, ID) {
     //decode
     let speed = 350;
@@ -128,8 +147,8 @@ class Simulation {
 
     let player = this.players[ID];
 
-    player.position.x += pressX * speed;
-    player.position.y += pressY * speed;
+    player.position.x += Math.floor(pressX * speed);
+    player.position.y += Math.floor(pressY * speed);
 
     player.sequenceID = sequenceID;
   }
